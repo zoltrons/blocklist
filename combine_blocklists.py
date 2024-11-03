@@ -22,7 +22,8 @@ def fetch_blocklist(url):
 def is_valid_host(line):
     """Checks if a line contains a valid host entry."""
     return (
-        not line.startswith("#") and  # Exclude comment lines
+        not line.startswith("#") and  # Exclude lines that start with #
+        not line.startswith("||#") and  # Exclude lines that start with ||#
         (line.startswith("0.0.0.0") or
          line.startswith("127.0.0.1") or
          line.startswith("255.255.255.255") or
