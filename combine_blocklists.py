@@ -1,5 +1,4 @@
 import requests
-import os
 
 # List of blocklist URLs
 blocklist_urls = [
@@ -36,7 +35,9 @@ def combine_blocklists():
                 host_entry = line.split()[1]
                 if host_entry not in seen_hosts:
                     seen_hosts.add(host_entry)
-                    combined_lines.append(line)
+                    # Format for AdGuard Home
+                    formatted_entry = f"||{host_entry}^"
+                    combined_lines.append(formatted_entry)
 
     # Create a new description with the count of unique hosts
     unique_host_count = len(seen_hosts)
