@@ -1,6 +1,6 @@
 import requests
 
-# List of blocklist URLs
+# List of blocklist URLs (replace with your actual URLs)
 blocklist_urls = [
     "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
     "https://big.oisd.nl/",
@@ -19,6 +19,30 @@ def fetch_blocklist(url):
         print(f"Error fetching {url}: {e}")
         return []
 
+def is_valid_host(line):
+    """Checks if a line contains a valid host entry."""
+    return (
+        line.startswith("0.0.0.0") or
+        line.startswith("127.0.0.1") or
+        line.startswith("255.255.255.255") or
+        line.startswith("::1") or
+        line.startswith("||") or
+        line.startswith("*.") or
+        ("." in line and not line.startswith("!"))  # General hostname check
+    )
+
+def extract_host(line):
+    """Extracts and formats the host from a line."""
+    # Handle different formats
+    if line.startswith("0.0.0.0") or line.startswith("127.0.0.1") or line.startswith("255.255.255.255") or line.startswith("::1"):
+        return line.split()[1]  # Get the hostname after the IP
+    elif line.startswith("||"):
+        return line[2:-1]  # Remove || and trailing ^
+    elif line.startswith("*."):
+        return line.strip()  # Keep wildcard entries as is
+    else:
+        return line.strip()  # Strip any extra spaces for standard hosts
+
 def combine_blocklists():
     """Combines multiple blocklists, counts unique hosts, and formats the output."""
     seen_hosts = set()
@@ -26,21 +50,22 @@ def combine_blocklists():
 
     for url in blocklist_urls:
         lines = fetch_blocklist(url)
+        print(f"Fetched {len(lines)} lines from {url}")  # Log the number of lines fetched
+
         for line in lines:
-            # Preserve metadata comments
-            if line.startswith("!") or line.startswith("#"):
-                continue  # Skip existing descriptions
-            elif line.startswith("0.0.0.0") or line.startswith("127.0.0.1"):
-                # Standardize and check if host is already added
-                host_entry = line.split()[1]
+            if is_valid_host(line):
+                host_entry = extract_host(line)
                 if host_entry not in seen_hosts:
                     seen_hosts.add(host_entry)
                     # Format for AdGuard Home
-                    formatted_entry = f"||{host_entry}^"
+                    if not line.startswith("||"):
+                        formatted_entry = f"||{host_entry}^"  # Add AdGuard format
+                    else:
+                        formatted_entry = line  # Keep existing AdGuard format
                     combined_lines.append(formatted_entry)
 
-    # Create a new description with the count of unique hosts
     unique_host_count = len(seen_hosts)
+    print(f"Total unique hosts counted: {unique_host_count}")  # Log unique host count
     combined_lines.insert(0, f"! Combined blocklist - {unique_host_count} unique hosts")
     
     # Write combined list to file
