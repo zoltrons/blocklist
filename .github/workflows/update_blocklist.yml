@@ -25,11 +25,11 @@ jobs:
         run: python combine_blocklists.py
 
       - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add combined_blocklist.txt
-          git commit -m "Update combined blocklist"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "Update combined blocklist" || echo "No changes to commit"
+          git push origin main
