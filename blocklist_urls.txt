@@ -1,0 +1,9 @@
+https://tgc.cloud/downloads/hosts.txt
+https://divested.dev/hosts-domains-wildcards
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt
+https://www.github.developerdan.com/hosts/lists/ads-and-tracking-extended.txt
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_27.txt
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_33.txt
+https://badmojr.github.io/1Hosts/Lite/adblock.txt
