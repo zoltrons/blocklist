@@ -10,11 +10,11 @@ blocklist_urls = [
 output_file = "combined_blocklist.txt"
 
 def fetch_blocklist(url):
-    """Fetches a blocklist and returns its lines."""
+    """Fetches a blocklist and returns its lines, excluding comments."""
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
-        return response.text.splitlines()
+        return [line for line in response.text.splitlines() if not line.startswith("#")]
     except requests.RequestException as e:
         print(f"Error fetching {url}: {e}")
         return []
@@ -23,7 +23,6 @@ def is_valid_host(line):
     """Checks if a line contains a valid host entry."""
     return (
         not line.startswith("#") and  # Exclude lines that start with #
-        not line.startswith("||#") and  # Exclude lines that start with ||#
         (line.startswith("0.0.0.0") or
          line.startswith("127.0.0.1") or
          line.startswith("255.255.255.255") or
